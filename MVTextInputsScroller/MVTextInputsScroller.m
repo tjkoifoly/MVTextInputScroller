@@ -38,7 +38,9 @@ static BOOL isIPad() {
 @property(weak, nonatomic) UIScrollView *scrollView;
 @property(strong, nonatomic) NSArray *textInputs;
 @property CGSize keyboardSize;
+@property BOOL keyboardVisible;
 @property(weak, nonatomic) UIView *activeView;
+@property(weak, nonatomic) UIView *activeViewBeforeOrientationChange;
 @end
 
 @implementation MVTextInputsScroller
@@ -60,54 +62,43 @@ static BOOL isIPad() {
 
 - (void)setupObservers {
 
-    // Listen to 'did begin editing' notifications
     NSNotificationCenter *nc = [NSNotificationCenter defaultCenter];
-    [nc addObserver:self
-           selector:@selector(textInputDidBeginEditing:)
-               name:UITextViewTextDidBeginEditingNotification
-             object:nil];
-    [nc addObserver:self
-           selector:@selector(textInputDidBeginEditing:)
-               name:UITextFieldTextDidBeginEditingNotification
-             object:nil];
+    // Listen to 'did begin editing' notifications
+    [nc addObserver:self selector:@selector(textInputDidBeginEditing:) name:UITextViewTextDidBeginEditingNotification object:nil];
+    [nc addObserver:self selector:@selector(textInputDidBeginEditing:) name:UITextFieldTextDidBeginEditingNotification object:nil];
 
     // Listen to keyboard events
-//    [nc addObserver:self
-//         selector:@selector(keyboardDidShow:)
-//             name:UIKeyboardDidShowNotification
-//           object:nil];
-    [nc addObserver:self
-           selector:@selector(keyboardWillShow:)
-               name:UIKeyboardWillShowNotification
-             object:nil];
-
-
+    //[nc addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
+    [nc addObserver:self selector:@selector(keyboardWillShow:) name:UIKeyboardWillShowNotification object:nil];
     [nc addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
-
     [nc addObserver:self selector:@selector(keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
 
+    // Listen to orientation changes
     [nc addObserver:self selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
 #pragma mark - keyboard notifications
-- (void)keyboardDidShow:(NSNotification *)notification
-{
-    DLog();
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, 216, 0.0);
-    self.scrollView.contentInset = contentInsets;
-}
 - (void)keyboardWillShow:(NSNotification *)notification
 {
     DLog();
-    UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, 216, 0.0);
-    self.scrollView.contentInset = contentInsets;
+    self.keyboardVisible = YES;
+    if (self.activeView == nil) {
+        // Restore if this is just an orientation change
+        self.activeView = self.activeViewBeforeOrientationChange;
+    }
+    //UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, 216, 0.0);
+    //self.scrollView.contentInset = contentInsets;
 }
 - (void)keyboardWillHide:(NSNotification *)notification
 {
+    // TODO: This is sometimes called before keyboardDidChangeFrame
     DLog();
-    self.scrollView.contentInset = UIEdgeInsetsZero;
+    self.keyboardVisible = NO;
+    self.activeViewBeforeOrientationChange = self.activeView;
+    //self.scrollView.contentInset = UIEdgeInsetsZero;
     self.activeView = nil;
 }
+
 - (void)keyboardDidChangeFrame:(NSNotification *)notification {
 
     NSDictionary *info = [notification userInfo];
@@ -117,19 +108,23 @@ static BOOL isIPad() {
     }
     DLog(@"New keyboard size: %@", NSStringFromCGSize(self.keyboardSize));
 
-    if (self.activeView != nil) {
+    // Set/reset scrollView content insets based on keyboard visibility
+    self.scrollView.contentInset = self.keyboardVisible ? UIEdgeInsetsMake(0.0, 0.0, self.keyboardSize.height, 0.0) : UIEdgeInsetsZero;
+
+    // If there is an active view and the keyboard is visible
+    if (self.activeView != nil && self.keyboardVisible) {
+
         [self makeViewVisible:self.activeView];
     }
 }
 
 - (void)orientationChanged:(NSNotification *)notification {
 
+    DLog();
     if (self.activeView != nil) {
         [self makeViewVisible:self.activeView];
     }
 }
-
-
 
 #pragma mark - text input notifications
 
@@ -169,7 +164,7 @@ static BOOL isIPad() {
     // TODO: Get correct keyboard height in all cases
     CGSize keyboardSize = self.keyboardSize;
     if (CGSizeEqualToSize(keyboardSize, CGSizeZero)) {
-        keyboardSize = UIInterfaceOrientationIsPortrait([[self class] currentOrientation]) ? CGSizeMake(320, 216) : CGSizeMake(480, 162);
+        //keyboardSize = UIInterfaceOrientationIsPortrait([[self class] currentOrientation]) ? CGSizeMake(320, 216) : CGSizeMake(480, 162);
     }
 
     CGSize currentScreenSize = [[self class] currentScreenSize];
