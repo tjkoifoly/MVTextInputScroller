@@ -5,6 +5,7 @@
 
 #import "MVTextInputsScroller.h"
 
+
 static BOOL isIPad() {
     return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
 }
@@ -70,15 +71,6 @@ static BOOL isIPad() {
                name:UITextFieldTextDidBeginEditingNotification
              object:nil];
 
-//    [nc addObserver:self
-//           selector:@selector(textInputDidEndEditing:)
-//               name:UITextViewTextDidEndEditingNotification
-//             object:nil];
-//    [nc addObserver:self
-//           selector:@selector(textInputDidEndEditing:)
-//               name:UITextViewTextDidEndEditingNotification
-//             object:nil];
-
     // Listen to keyboard events
 //    [nc addObserver:self
 //         selector:@selector(keyboardDidShow:)
@@ -90,15 +82,11 @@ static BOOL isIPad() {
              object:nil];
 
 
-    [nc addObserver:self
-         selector:@selector(keyboardWillHide:)
-             name:UIKeyboardWillHideNotification
-           object:nil];
+    [nc addObserver:self selector:@selector(keyboardWillHide:) name:UIKeyboardWillHideNotification object:nil];
 
-    [nc addObserver:self
-         selector:@selector(keyboardDidChangeFrame:)
-             name:UIKeyboardDidChangeFrameNotification
-           object:nil];
+    [nc addObserver:self selector:@selector(keyboardDidChangeFrame:) name:UIKeyboardDidChangeFrameNotification object:nil];
+
+    [nc addObserver:self selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
 }
 
 #pragma mark - keyboard notifications
@@ -118,11 +106,29 @@ static BOOL isIPad() {
 {
     DLog();
     self.scrollView.contentInset = UIEdgeInsetsZero;
+    self.activeView = nil;
 }
 - (void)keyboardDidChangeFrame:(NSNotification *)notification {
 
-    DLog();
+    NSDictionary *info = [notification userInfo];
+    self.keyboardSize = [[info objectForKey:UIKeyboardFrameBeginUserInfoKey] CGRectValue].size;
+    if (UIInterfaceOrientationIsLandscape([[self class] currentOrientation])) {
+        self.keyboardSize = CGSizeMake(self.keyboardSize.height, self.keyboardSize.width);
+    }
+    DLog(@"New keyboard size: %@", NSStringFromCGSize(self.keyboardSize));
+
+    if (self.activeView != nil) {
+        [self makeViewVisible:self.activeView];
+    }
 }
+
+- (void)orientationChanged:(NSNotification *)notification {
+
+    if (self.activeView != nil) {
+        [self makeViewVisible:self.activeView];
+    }
+}
+
 
 
 #pragma mark - text input notifications
@@ -136,7 +142,7 @@ static BOOL isIPad() {
 
 - (void)processInputDidBeginEditing:(id)object {
 
-    DLog(@"%@", object);
+    //DLog(@"%@", object);
     if ([object isKindOfClass:[UIView class]]) {
         UIView *view = (UIView *)object;
         if ([self scrollViewHasSubview:view]) {
@@ -154,32 +160,39 @@ static BOOL isIPad() {
 
 - (void)makeViewVisible:(UIView *)view {
 
-    DLog();
-
+    // Store activeView somewhere so we can recalculate on interface rotation
     self.activeView = view;
 
     //UIEdgeInsets currentInsets = self.scrollView.contentInset;
     float bottomInset = 0;//currentInsets.bottom;
 
-    // Set bottom margin to keyboard height
-    CGSize keyboardSize = CGSizeMake(320, 216);
+    // TODO: Get correct keyboard height in all cases
+    CGSize keyboardSize = self.keyboardSize;
+    if (CGSizeEqualToSize(keyboardSize, CGSizeZero)) {
+        keyboardSize = UIInterfaceOrientationIsPortrait([[self class] currentOrientation]) ? CGSizeMake(320, 216) : CGSizeMake(480, 162);
+    }
 
     CGSize currentScreenSize = [[self class] currentScreenSize];
     CGPoint viewOriginInScrollView = [self viewOriginInScrollView:view];
+    // Calculate scroll view origin without offset
+    CGPoint scrollViewOriginInMainWindowNoOffset = [[self class] viewOriginInMainWindow:self.scrollView];
+    scrollViewOriginInMainWindowNoOffset.y += self.scrollView.contentOffset.y;
 
-
+    // Calculate visible scrollable height (which is the portion of the screen that can scroll and is not hidden by the keyboard)
+    float visibleScrollableHeight = currentScreenSize.height - keyboardSize.height - scrollViewOriginInMainWindowNoOffset.y;
+    // Calculate the offset of the view centerY relative to the scrollView
     float viewCenterY = viewOriginInScrollView.y + view.frame.size.height/2;
-    float visibleScreenHeight = currentScreenSize.height - keyboardSize.height;
 
-    float desiredContentOffsetY = viewCenterY - visibleScreenHeight/2;
+    // Calculate new content offset that will cause the view to be centered in the visible scrollable area
+    float newContentOffsetY = viewCenterY - visibleScrollableHeight/2;
     float contentHeight = self.scrollView.contentSize.height;
-    // If content offset would cause the scroll view to go past its bottom, recalculate
-    // to the maximum content offset.
-    if (desiredContentOffsetY + visibleScreenHeight > contentHeight + bottomInset) {
-        desiredContentOffsetY = contentHeight + bottomInset - visibleScreenHeight;
+    // If content offset would cause the scroll view to scroll below its bottom, recalculate
+    // to the maximum content offset. This way we don't show additional empty space below the last visible control.
+    if (newContentOffsetY + visibleScrollableHeight > contentHeight + bottomInset) {
+        newContentOffsetY = contentHeight + bottomInset - visibleScrollableHeight;
     }
-    CGPoint desiredContentOffset = CGPointMake(0, desiredContentOffsetY);
-    [self.scrollView setContentOffset:desiredContentOffset animated:YES];
+    CGPoint newContentOffset = CGPointMake(0, newContentOffsetY);
+    [self.scrollView setContentOffset:newContentOffset animated:YES];
 }
 
 #pragma mark - utility methods
@@ -194,12 +207,15 @@ static BOOL isIPad() {
     }
 }
 
++ (UIInterfaceOrientation)currentOrientation {
+    return [UIApplication sharedApplication].statusBarOrientation;
+}
 + (CGSize)currentScreenSize
 {
     CGRect screenBounds = [UIScreen mainScreen].bounds;
     CGFloat width = CGRectGetWidth(screenBounds);
     CGFloat height = CGRectGetHeight(screenBounds);
-    UIInterfaceOrientation interfaceOrientation = [UIApplication sharedApplication].statusBarOrientation;
+    UIInterfaceOrientation interfaceOrientation = [self currentOrientation];
     return UIInterfaceOrientationIsPortrait(interfaceOrientation) ? CGSizeMake(width, height) : CGSizeMake(height, width);
 }
 
