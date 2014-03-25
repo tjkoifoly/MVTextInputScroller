@@ -161,10 +161,10 @@ static BOOL isIPad() {
     //UIEdgeInsets currentInsets = self.scrollView.contentInset;
     float bottomInset = 0;//currentInsets.bottom;
 
-    // TODO: Get correct keyboard height in all cases
+    // Get keyboard size (if zero, it hasn't been set yet so try to guess)
     CGSize keyboardSize = self.keyboardSize;
     if (CGSizeEqualToSize(keyboardSize, CGSizeZero)) {
-        //keyboardSize = UIInterfaceOrientationIsPortrait([[self class] currentOrientation]) ? CGSizeMake(320, 216) : CGSizeMake(480, 162);
+        keyboardSize = [[self class] currentEstimatedKeyboardSize];
     }
 
     CGSize currentScreenSize = [[self class] currentScreenSize];
@@ -199,6 +199,17 @@ static BOOL isIPad() {
 
     for (UIView *view in self.textInputs) {
         DLog(@"class: %@, frame: %@", NSStringFromClass([view class]), NSStringFromCGRect(view.frame));
+    }
+}
+
++ (CGSize)currentEstimatedKeyboardSize {
+
+    BOOL portrait = UIInterfaceOrientationIsPortrait([self currentOrientation]);
+    if (isIPad()) {
+        return portrait ? CGSizeMake(320, 216) : CGSizeMake(480, 162);
+    }
+    else {
+        return portrait ? CGSizeMake(768, 264) : CGSizeMake(1024, 352);
     }
 }
 
