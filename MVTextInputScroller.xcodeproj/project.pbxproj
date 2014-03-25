@@ -12,15 +12,16 @@
 		6555E64B18E1BAFA008A4512 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6555E64A18E1BAFA008A4512 /* UIKit.framework */; };
 		6555E65118E1BAFA008A4512 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6555E64F18E1BAFA008A4512 /* InfoPlist.strings */; };
 		6555E65318E1BAFA008A4512 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 6555E65218E1BAFA008A4512 /* main.m */; };
-		6555E65718E1BAFA008A4512 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6555E65618E1BAFA008A4512 /* AppDelegate.m */; };
 		6555E65A18E1BAFA008A4512 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 6555E65818E1BAFA008A4512 /* Main.storyboard */; };
-		6555E65D18E1BAFA008A4512 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6555E65C18E1BAFA008A4512 /* ViewController.m */; };
 		6555E65F18E1BAFA008A4512 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 6555E65E18E1BAFA008A4512 /* Images.xcassets */; };
 		6555E66618E1BAFA008A4512 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6555E66518E1BAFA008A4512 /* XCTest.framework */; };
 		6555E66718E1BAFA008A4512 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6555E64618E1BAFA008A4512 /* Foundation.framework */; };
 		6555E66818E1BAFA008A4512 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 6555E64A18E1BAFA008A4512 /* UIKit.framework */; };
 		6555E67018E1BAFA008A4512 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 6555E66E18E1BAFA008A4512 /* InfoPlist.strings */; };
 		6555E67218E1BAFA008A4512 /* MVTextInputScrollerTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 6555E67118E1BAFA008A4512 /* MVTextInputScrollerTests.m */; };
+		6555E68118E1C091008A4512 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 6555E67E18E1C091008A4512 /* AppDelegate.m */; };
+		6555E68218E1C091008A4512 /* ViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 6555E68018E1C091008A4512 /* ViewController.m */; };
+		ABC3594B7EA359464D284C63 /* MVTextInputsScroller.m in Sources */ = {isa = PBXBuildFile; fileRef = ABC3540A0E9AECBE384208F5 /* MVTextInputsScroller.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -42,17 +43,19 @@
 		6555E65018E1BAFA008A4512 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6555E65218E1BAFA008A4512 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		6555E65418E1BAFA008A4512 /* MVTextInputScroller-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "MVTextInputScroller-Prefix.pch"; sourceTree = "<group>"; };
-		6555E65518E1BAFA008A4512 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		6555E65618E1BAFA008A4512 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		6555E65918E1BAFA008A4512 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		6555E65B18E1BAFA008A4512 /* ViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
-		6555E65C18E1BAFA008A4512 /* ViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
 		6555E65E18E1BAFA008A4512 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
 		6555E66418E1BAFA008A4512 /* MVTextInputScrollerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MVTextInputScrollerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		6555E66518E1BAFA008A4512 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		6555E66D18E1BAFA008A4512 /* MVTextInputScrollerTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MVTextInputScrollerTests-Info.plist"; sourceTree = "<group>"; };
 		6555E66F18E1BAFA008A4512 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		6555E67118E1BAFA008A4512 /* MVTextInputScrollerTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MVTextInputScrollerTests.m; sourceTree = "<group>"; };
+		6555E67D18E1C091008A4512 /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		6555E67E18E1C091008A4512 /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		6555E67F18E1C091008A4512 /* ViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ViewController.h; sourceTree = "<group>"; };
+		6555E68018E1C091008A4512 /* ViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ViewController.m; sourceTree = "<group>"; };
+		ABC3522A065CAC921B22EDEB /* MVTextInputsScroller.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = MVTextInputsScroller.h; sourceTree = "<group>"; };
+		ABC3540A0E9AECBE384208F5 /* MVTextInputsScroller.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = MVTextInputsScroller.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -82,6 +85,7 @@
 		6555E63A18E1BAFA008A4512 = {
 			isa = PBXGroup;
 			children = (
+				6555E67B18E1BBF9008A4512 /* MVTextInputsScroller */,
 				6555E64C18E1BAFA008A4512 /* MVTextInputScroller */,
 				6555E66B18E1BAFA008A4512 /* MVTextInputScrollerTests */,
 				6555E64518E1BAFA008A4512 /* Frameworks */,
@@ -112,11 +116,8 @@
 		6555E64C18E1BAFA008A4512 /* MVTextInputScroller */ = {
 			isa = PBXGroup;
 			children = (
-				6555E65518E1BAFA008A4512 /* AppDelegate.h */,
-				6555E65618E1BAFA008A4512 /* AppDelegate.m */,
+				6555E67C18E1C091008A4512 /* Classes */,
 				6555E65818E1BAFA008A4512 /* Main.storyboard */,
-				6555E65B18E1BAFA008A4512 /* ViewController.h */,
-				6555E65C18E1BAFA008A4512 /* ViewController.m */,
 				6555E65E18E1BAFA008A4512 /* Images.xcassets */,
 				6555E64D18E1BAFA008A4512 /* Supporting Files */,
 			);
@@ -150,6 +151,26 @@
 				6555E66E18E1BAFA008A4512 /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		6555E67B18E1BBF9008A4512 /* MVTextInputsScroller */ = {
+			isa = PBXGroup;
+			children = (
+				ABC3540A0E9AECBE384208F5 /* MVTextInputsScroller.m */,
+				ABC3522A065CAC921B22EDEB /* MVTextInputsScroller.h */,
+			);
+			path = MVTextInputsScroller;
+			sourceTree = "<group>";
+		};
+		6555E67C18E1C091008A4512 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				6555E67D18E1C091008A4512 /* AppDelegate.h */,
+				6555E67E18E1C091008A4512 /* AppDelegate.m */,
+				6555E67F18E1C091008A4512 /* ViewController.h */,
+				6555E68018E1C091008A4512 /* ViewController.m */,
+			);
+			path = Classes;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -249,9 +270,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				6555E65D18E1BAFA008A4512 /* ViewController.m in Sources */,
-				6555E65718E1BAFA008A4512 /* AppDelegate.m in Sources */,
+				6555E68218E1C091008A4512 /* ViewController.m in Sources */,
 				6555E65318E1BAFA008A4512 /* main.m in Sources */,
+				ABC3594B7EA359464D284C63 /* MVTextInputsScroller.m in Sources */,
+				6555E68118E1C091008A4512 /* AppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -456,6 +478,7 @@
 				6555E67718E1BAFA008A4512 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		6555E67818E1BAFA008A4512 /* Build configuration list for PBXNativeTarget "MVTextInputScrollerTests" */ = {
 			isa = XCConfigurationList;
@@ -464,6 +487,7 @@
 				6555E67A18E1BAFA008A4512 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
