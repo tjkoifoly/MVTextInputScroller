@@ -5,11 +5,6 @@
 
 #import "MVTextInputsScroller.h"
 
-
-static BOOL isIPad() {
-    return (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad);
-}
-
 ///////////////////////////////////////////////////////
 @interface UIView (ViewHierarchyInputs)
 - (NSArray *)textInputsInHierarchy;
@@ -34,11 +29,14 @@ static BOOL isIPad() {
 @end
 ///////////////////////////////////////////////////////
 
+static NSString *kContentSizeKeyToObserve = @"scrollView.contentSize";
+
 @interface MVTextInputsScroller ()
 @property(weak, nonatomic) UIScrollView *scrollView;
 @property(strong, nonatomic) NSArray *textInputs;
 @property CGSize keyboardSize;
 @property BOOL keyboardVisible;
+@property CGSize storedContentSize;
 @property(weak, nonatomic) UIView *activeView;
 @property(weak, nonatomic) UIView *activeViewBeforeOrientationChange;
 @end
@@ -47,6 +45,7 @@ static BOOL isIPad() {
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
+    [self removeObserver:self forKeyPath:kContentSizeKeyToObserve context:nil];
 }
 
 - (id)initWithScrollView:(UIScrollView *)scrollView {
@@ -54,8 +53,9 @@ static BOOL isIPad() {
 
         self.scrollView = scrollView;
         self.textInputs = [scrollView textInputsInHierarchy];
-
+        self.storedContentSize = self.scrollView.contentSize;
         [self setupObservers];
+        //[self printLayout];
     }
     return self;
 }
@@ -66,6 +66,8 @@ static BOOL isIPad() {
     // Listen to 'did begin editing' notifications
     [nc addObserver:self selector:@selector(textInputDidBeginEditing:) name:UITextViewTextDidBeginEditingNotification object:nil];
     [nc addObserver:self selector:@selector(textInputDidBeginEditing:) name:UITextFieldTextDidBeginEditingNotification object:nil];
+    [nc addObserver:self selector:@selector(textInputDidEndEditing:) name:UITextViewTextDidEndEditingNotification object:nil];
+    [nc addObserver:self selector:@selector(textInputDidEndEditing:) name:UITextFieldTextDidEndEditingNotification object:nil];
 
     // Listen to keyboard events
     //[nc addObserver:self selector:@selector(keyboardDidShow:) name:UIKeyboardDidShowNotification object:nil];
@@ -75,24 +77,24 @@ static BOOL isIPad() {
 
     // Listen to orientation changes
     [nc addObserver:self selector:@selector(orientationChanged:) name:UIDeviceOrientationDidChangeNotification object:nil];
+
+    // Useful if the scroll view content size changes
+    [self addObserver:self forKeyPath:kContentSizeKeyToObserve options:0 context:nil];
 }
 
 #pragma mark - keyboard notifications
 - (void)keyboardWillShow:(NSNotification *)notification
 {
-    DLog();
+    //DLog();
     self.keyboardVisible = YES;
     if (self.activeView == nil) {
         // Restore if this is just an orientation change
         self.activeView = self.activeViewBeforeOrientationChange;
     }
-    //UIEdgeInsets contentInsets = UIEdgeInsetsMake(0.0, 0.0, 216, 0.0);
-    //self.scrollView.contentInset = contentInsets;
 }
 - (void)keyboardWillHide:(NSNotification *)notification
 {
-    // TODO: This is sometimes called before keyboardDidChangeFrame
-    DLog();
+    //DLog();
     self.keyboardVisible = NO;
     self.activeViewBeforeOrientationChange = self.activeView;
     //self.scrollView.contentInset = UIEdgeInsetsZero;
@@ -106,23 +108,20 @@ static BOOL isIPad() {
     if (UIInterfaceOrientationIsLandscape([[self class] currentOrientation])) {
         self.keyboardSize = CGSizeMake(self.keyboardSize.height, self.keyboardSize.width);
     }
-    DLog(@"New keyboard size: %@", NSStringFromCGSize(self.keyboardSize));
-
-    // Set/reset scrollView content insets based on keyboard visibility
-    self.scrollView.contentInset = self.keyboardVisible ? UIEdgeInsetsMake(0.0, 0.0, self.keyboardSize.height, 0.0) : UIEdgeInsetsZero;
+    //DLog(@"New keyboard size: %@", NSStringFromCGSize(self.keyboardSize));
 
     // If there is an active view and the keyboard is visible
     if (self.activeView != nil && self.keyboardVisible) {
 
-        [self makeViewVisible:self.activeView];
+        [self makeViewVisible:self.activeView animated:YES];
     }
 }
 
+
 - (void)orientationChanged:(NSNotification *)notification {
 
-    DLog();
     if (self.activeView != nil) {
-        [self makeViewVisible:self.activeView];
+        [self makeViewVisible:self.activeView animated:YES];
     }
 }
 
@@ -130,10 +129,12 @@ static BOOL isIPad() {
 
 - (void)textInputDidBeginEditing:(NSNotification *)notice {
     [self processInputDidBeginEditing:notice.object];
+    [NSObject cancelPreviousPerformRequestsWithTarget:self];
 }
-//- (void)textInputDidEndEditing:(NSNotification *)notice {
-//    DLog(@"%@", notice.object);
-//}
+
+- (void)textInputDidEndEditing:(NSNotification *)notice {
+    [self performSelector:@selector(resetContentOffset) withObject:nil afterDelay:0.2f];
+}
 
 - (void)processInputDidBeginEditing:(id)object {
 
@@ -141,75 +142,120 @@ static BOOL isIPad() {
     if ([object isKindOfClass:[UIView class]]) {
         UIView *view = (UIView *)object;
         if ([self scrollViewHasSubview:view]) {
-            [self makeViewVisible:view];
+            self.activeView = view;
+            [self makeViewVisible:view animated:YES];
+        }
+    }
+}
+#pragma mark - Scroll View content size changes
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if ([keyPath isEqualToString:kContentSizeKeyToObserve]) {
+        // Update
+        CGSize contentSize = self.scrollView.contentSize;
+        if (!CGSizeEqualToSize(contentSize, self.storedContentSize)) {
+            //DLog(@"prev content size: %@, current content size: %@", NSStringFromCGSize(self.storedContentSize), NSStringFromCGSize(contentSize));
+            self.storedContentSize = contentSize;
+            if (self.activeView != nil) {
+                [self makeViewVisible:self.activeView animated:NO];
+            }
         }
     }
 }
 
-#pragma mark - setters
-- (void)setDismissKeyboardOnScroll:(BOOL)dismissKeyboardOnScroll
-{
-    _dismissKeyboardOnScroll = dismissKeyboardOnScroll;
-    self.scrollView.keyboardDismissMode = dismissKeyboardOnScroll ? UIScrollViewKeyboardDismissModeOnDrag : UIScrollViewKeyboardDismissModeNone;
-}
-
-- (void)makeViewVisible:(UIView *)view {
-
-    // Store activeView somewhere so we can recalculate on interface rotation
-    self.activeView = view;
-
-    //UIEdgeInsets currentInsets = self.scrollView.contentInset;
-    float bottomInset = 0;//currentInsets.bottom;
+- (CGSize)calculateKeyboardSizeWithView:(UIView *)view {
 
     // Get keyboard size (if zero, it hasn't been set yet so try to guess)
     CGSize keyboardSize = self.keyboardSize;
     if (CGSizeEqualToSize(keyboardSize, CGSizeZero)) {
         keyboardSize = [[self class] currentEstimatedKeyboardSize];
+        // Account for accessory views in calculating keyboard size
+        if ([view isKindOfClass:[UITextField class]]) {
+            UITextField *textField = (UITextField *)view;
+            if (textField.inputAccessoryView) {
+                CGFloat accessoryViewHeight = textField.inputAccessoryView.frame.size.height;
+                //DLog(@"AccessoryView height: %f", accessoryViewHeight);
+                CGSize estimatedSize = [[self class] currentEstimatedKeyboardSize];
+                if (estimatedSize.height == keyboardSize.height)
+                    keyboardSize.height += accessoryViewHeight;
+            }
+        }
     }
+    return keyboardSize;
+}
 
-    CGSize currentScreenSize = [[self class] currentScreenSize];
-    CGPoint viewOriginInScrollView = [self viewOriginInScrollView:view];
-    // Calculate scroll view origin without offset
-    CGPoint scrollViewOriginInMainWindowNoOffset = [[self class] viewOriginInMainWindow:self.scrollView];
-    scrollViewOriginInMainWindowNoOffset.y += self.scrollView.contentOffset.y;
+- (void)makeViewVisible:(UIView *)view animated:(BOOL)animated {
+
+    // Calculate keyboard size
+    CGSize keyboardSize = [self calculateKeyboardSizeWithView:view];
 
     // Calculate visible scrollable height (which is the portion of the screen that can scroll and is not hidden by the keyboard)
-    float visibleScrollableHeight = currentScreenSize.height - keyboardSize.height - scrollViewOriginInMainWindowNoOffset.y;
+    float visibleScrollableHeight = [self visibleScrollableHeightWithKeyboardSize:keyboardSize];
+
     // Calculate the offset of the view centerY relative to the scrollView
+    CGPoint viewOriginInScrollView = [self viewOriginInScrollView:view];
     float viewCenterY = viewOriginInScrollView.y + view.frame.size.height/2;
 
     // Calculate new content offset that will cause the view to be centered in the visible scrollable area
     float newContentOffsetY = viewCenterY - visibleScrollableHeight/2;
+
+    // Update content offset, subject to top/bottom constraints
+    [self updateWithNewContentOffsetY:newContentOffsetY visibleScrollableHeight:visibleScrollableHeight animated:animated];
+}
+
+- (void)resetContentOffset {
+
+    // Calculate visible scrollable height (which is the portion of the screen that can scroll and is not hidden by the keyboard)
+    float visibleScrollableHeight = [self visibleScrollableHeightWithKeyboardSize:CGSizeZero];
+
+    // Use current offset as reference
+    float newContentOffsetY  = self.scrollView.contentOffset.y;
+
+    // Update content offset, subject to top/bottom constraints
+    [self updateWithNewContentOffsetY:newContentOffsetY visibleScrollableHeight:visibleScrollableHeight animated:YES];
+}
+
+- (void)updateWithNewContentOffsetY:(float)newContentOffsetY visibleScrollableHeight:(float)visibleScrollableHeight animated:(BOOL)animated {
+
+    // Calculate new content offset that will cause the view to be centered in the visible scrollable area
     float contentHeight = self.scrollView.contentSize.height;
     // If content offset would cause the scroll view to scroll below its bottom, recalculate
     // to the maximum content offset. This way we don't show additional empty space below the last visible control.
-    if (newContentOffsetY + visibleScrollableHeight > contentHeight + bottomInset) {
-        newContentOffsetY = contentHeight + bottomInset - visibleScrollableHeight;
+    if (newContentOffsetY + visibleScrollableHeight > contentHeight) {
+        newContentOffsetY = contentHeight - visibleScrollableHeight;
+    }
+    // Ensure content offset is not negative
+    if (newContentOffsetY < 0) {
+        newContentOffsetY = 0;
     }
     CGPoint newContentOffset = CGPointMake(0, newContentOffsetY);
-    [self.scrollView setContentOffset:newContentOffset animated:YES];
+    [self.scrollView setContentOffset:newContentOffset animated:animated];
+}
+
+- (float)visibleScrollableHeightWithKeyboardSize:(CGSize)keyboardSize {
+
+    CGSize currentScreenSize = [[self class] currentScreenSize];
+    // Calculate scroll view origin without offset
+    CGPoint scrollViewOriginInMainWindowNoOffset = [[self class] viewOriginInMainWindow:self.scrollView];
+    scrollViewOriginInMainWindowNoOffset.y += self.scrollView.contentOffset.y;
+
+    return currentScreenSize.height - keyboardSize.height - scrollViewOriginInMainWindowNoOffset.y;
 }
 
 #pragma mark - utility methods
+
 - (BOOL)scrollViewHasSubview:(UIView *)view {
     return [self.textInputs containsObject:view];
-}
-
-- (void)log {
-
-    for (UIView *view in self.textInputs) {
-        DLog(@"class: %@, frame: %@", NSStringFromClass([view class]), NSStringFromCGRect(view.frame));
-    }
 }
 
 + (CGSize)currentEstimatedKeyboardSize {
 
     BOOL portrait = UIInterfaceOrientationIsPortrait([self currentOrientation]);
-    if (isIPad()) {
-        return portrait ? CGSizeMake(320, 216) : CGSizeMake(480, 162);
+    if (UI_USER_INTERFACE_IDIOM() == UIUserInterfaceIdiomPad) {
+        return portrait ? CGSizeMake(768, 264) : CGSizeMake(1024, 352);
     }
     else {
-        return portrait ? CGSizeMake(768, 264) : CGSizeMake(1024, 352);
+        return portrait ? CGSizeMake(320, 216) : CGSizeMake(480, 162);
     }
 }
 
@@ -236,5 +282,11 @@ static BOOL isIPad() {
     return [mainView convertPoint:CGPointZero fromView:view];
 }
 
+//- (void)printLayout {
+//
+//    for (UIView *view in self.textInputs) {
+//        DLog(@"class: %@, frame: %@", NSStringFromClass([view class]), NSStringFromCGRect(view.frame));
+//    }
+//}
 
 @end

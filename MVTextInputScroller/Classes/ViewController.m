@@ -28,7 +28,7 @@
 	// Do any additional setup after loading the view, typically from a nib.
 
     self.inputsScroller = [[MVTextInputsScroller alloc] initWithScrollView:self.scrollView];
-    self.inputsScroller.dismissKeyboardOnScroll = YES;
+    self.scrollView.keyboardDismissMode = UIScrollViewKeyboardDismissModeOnDrag;
 }
 
 - (void)didReceiveMemoryWarning
@@ -37,11 +37,5 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (void)viewWillAppear:(BOOL)animated {
-    [super viewWillAppear:animated];
-    //UITextViewTextDidChangeNotification
-
-    [self.inputsScroller log];
-}
 
 @end

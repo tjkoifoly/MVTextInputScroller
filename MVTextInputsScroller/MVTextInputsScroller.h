@@ -13,8 +13,5 @@
 @interface MVTextInputsScroller : NSObject
 
 - (id)initWithScrollView:(UIScrollView *)scrollView;
-@property (nonatomic) BOOL dismissKeyboardOnScroll;
-@property (nonatomic) BOOL dismissKeyboardOnTap;
-- (void)log;
 
 @end
