@@ -45,7 +45,18 @@ static NSString *kContentSizeKeyToObserve = @"scrollView.contentSize";
 
 - (void)dealloc {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-    [self removeObserver:self forKeyPath:kContentSizeKeyToObserve context:nil];
+    [self unregister];
+}
+
+- (void)unregister {
+
+    // Run this in try/catch block just in case method is called when observer is not registered
+    @try {
+        [self removeObserver:self forKeyPath:kContentSizeKeyToObserve context:nil];
+    }
+    @catch (NSException * __unused exception) {
+        
+    }
 }
 
 - (id)initWithScrollView:(UIScrollView *)scrollView {

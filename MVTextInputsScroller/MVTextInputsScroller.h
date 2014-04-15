@@ -14,4 +14,6 @@
 
 - (id)initWithScrollView:(UIScrollView *)scrollView;
 
+// To be called within [dealloc] method of client calling code. Ensures observers are unregistered safely internally before tear-down.
+- (void)unregister;
 @end
