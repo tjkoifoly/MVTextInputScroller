@@ -114,6 +114,8 @@
 
         make.top.equalTo(self.phoneNumberInput.bottom).offset(kOffset);
         make.height.equalTo(@(kHeight));
+        // Very Important: We must ensure that the scrollView subviews have all constraints defined so that the
+        // contentSize can be derived correctly!
         make.bottom.equalTo(self.scrollView.bottom).offset(-kOffset);
     }];
 }
@@ -125,9 +127,11 @@
         if ([responder isKindOfClass:[UITextField class]]) {
             UITextField *textField = (UITextField *)responder;
             textField.returnKeyType = UIReturnKeyNext;
+            textField.autocorrectionType = UITextAutocorrectionTypeNo;
             textField.delegate = self;
         }
     }
+    self.descriptionInput.autocorrectionType = UITextAutocorrectionTypeNo;
     self.descriptionInput.delegate = self;
     self.descriptionInput.returnKeyType = UIReturnKeyNext;
 
