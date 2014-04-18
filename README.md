@@ -62,6 +62,11 @@ pod install
 
 Preview
 -------------------------------------------------------
+
+![MVTextInputScroller preview](https://github.com/bizz84/MVTextInputScroller/raw/master/Screenshots/iPhonePortrait.png "MVTextInputScroller preview")
+<br/><br/>
+![MVTextInputScroller preview](https://github.com/bizz84/MVTextInputScroller/raw/master/Screenshots/iPhoneLandscape.png "MVTextInputScroller preview")
+<br/>
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=Z2jliMEIIOU
 " target="_blank"><img src="http://img.youtube.com/vi/Z2jliMEIIOU/0.jpg" 
 alt="MVTextInputScroller Demo iOS" width="320" height="240" border="10" /></a><br/>
