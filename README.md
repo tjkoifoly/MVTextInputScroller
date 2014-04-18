@@ -1,7 +1,6 @@
 MVTextInputScroller
 ===================
-
-Class to keep any selected input fields visible on screen when the keyboard is shown.
+Helper class to center vertically any active input fields within a UIScrollView when the keyboard is visible.
 
 Scope
 -------------------------------------------------------

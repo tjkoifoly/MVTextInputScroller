@@ -1,7 +1,7 @@
 Pod::Spec.new do |s|
   s.name         = "MVTextInputScroller"
   s.version      = "1.0.1"
-  s.summary      = "Class to automatically center vertically any input fields within a UIScrollView hierarchy when active"
+  s.summary      = "Helper class to center vertically any active input fields within a UIScrollView when the keyboard is visible"
 
   s.description  = <<-DESC
 
