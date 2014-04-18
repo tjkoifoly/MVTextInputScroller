@@ -20,14 +20,15 @@
 @property(strong, nonatomic) IBOutlet UIScrollView *scrollView;
 @property(strong, nonatomic) IBOutlet JVFloatLabeledTextField *nameInput;
 @property(strong, nonatomic) IBOutlet JVFloatLabeledTextField *surnameInput;
-@property(strong, nonatomic) IBOutlet JVFloatLabeledTextView *bioInput;
-@property(strong, nonatomic) IBOutlet JVFloatLabeledTextField *postcodeInput;
+@property(strong, nonatomic) IBOutlet JVFloatLabeledTextView *descriptionInput;
 @property(strong, nonatomic) IBOutlet JVFloatLabeledTextField *addressL1Input;
 @property(strong, nonatomic) IBOutlet JVFloatLabeledTextField *addressL2Input;
+@property(strong, nonatomic) IBOutlet JVFloatLabeledTextField *phoneNumberInput;
 @property(strong, nonatomic) IBOutlet UIButton *confirmButton;
 
 - (IBAction)backToTopButtonPressed:(id)sender;
 - (IBAction)clearButtonPressed:(id)sender;
+- (IBAction)doneButtonPressed:(id)sender;
 @end
 @implementation ViewController
 
@@ -46,7 +47,7 @@
     // Dismiss keyboard on tap
     [self.view addGestureRecognizer:[[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(dismissKeyboard)]];
 
-    self.bioInput.placeholder = @"Claim details";
+    self.descriptionInput.placeholder = @"Claim details";
 
     // A bit of styling
     [self updateStyling];
@@ -55,7 +56,7 @@
 }
 
 - (NSArray *)allInputFields {
-    return @[self.nameInput, self.surnameInput, self.bioInput, self.postcodeInput, self.addressL1Input, self.addressL2Input, self.confirmButton];
+    return @[self.nameInput, self.surnameInput, self.descriptionInput, self.addressL1Input, self.addressL2Input, self.phoneNumberInput, self.confirmButton];
 }
 
 - (void)updateStyling {
@@ -70,7 +71,7 @@
 
     static CGFloat kOffset = 20.0f;
     static CGFloat kHeight = 44.0f;
-    MASAttachKeys(self.view, self.scrollView, self.nameInput, self.surnameInput, self.bioInput, self.postcodeInput, self.addressL1Input, self.addressL2Input, self.confirmButton);
+    MASAttachKeys(self.view, self.scrollView, self.nameInput, self.surnameInput, self.descriptionInput, self.addressL1Input, self.addressL2Input, self.phoneNumberInput, self.confirmButton);
 
     for (UIView *view in [self allInputFields]) {
         [view removeConstraints:view.constraints];
@@ -88,26 +89,26 @@
         make.top.equalTo(self.nameInput.bottom).offset(kOffset);
         make.height.equalTo(@(kHeight));
     }];
-    [self.bioInput makeConstraints:^(MASConstraintMaker *make) {
+    [self.descriptionInput makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.surnameInput.bottom).offset(kOffset);
         make.height.equalTo(@(kHeight));
     }];
-    [self.postcodeInput makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.bioInput.bottom).offset(kOffset);
-        make.height.equalTo(@(kHeight));
-    }];
     [self.addressL1Input makeConstraints:^(MASConstraintMaker *make) {
-        make.top.equalTo(self.postcodeInput.bottom).offset(kOffset);
+        make.top.equalTo(self.descriptionInput.bottom).offset(kOffset);
         make.height.equalTo(@(kHeight));
     }];
     [self.addressL2Input makeConstraints:^(MASConstraintMaker *make) {
         make.top.equalTo(self.addressL1Input.bottom).offset(kOffset);
         make.height.equalTo(@(kHeight));
     }];
+    [self.phoneNumberInput makeConstraints:^(MASConstraintMaker *make) {
+        make.top.equalTo(self.addressL2Input.bottom).offset(kOffset);
+        make.height.equalTo(@(kHeight));
+    }];
 
     [self.confirmButton makeConstraints:^(MASConstraintMaker *make) {
 
-        make.top.equalTo(self.addressL2Input.bottom).offset(kOffset);
+        make.top.equalTo(self.phoneNumberInput.bottom).offset(kOffset);
         make.height.equalTo(@(kHeight));
         make.bottom.equalTo(self.scrollView.bottom).offset(-kOffset);
     }];
@@ -115,7 +116,7 @@
 
 - (void)setInputResponderChain {
 
-    NSArray *textFields = @[self.nameInput, self.surnameInput, self.bioInput, self.postcodeInput, self.addressL1Input, self.addressL2Input];
+    NSArray *textFields = @[self.nameInput, self.surnameInput, self.descriptionInput, self.addressL1Input, self.addressL2Input, self.phoneNumberInput];
     for (UIResponder *responder in textFields) {
         if ([responder isKindOfClass:[UITextField class]]) {
             UITextField *textField = (UITextField *)responder;
@@ -123,10 +124,10 @@
             textField.delegate = self;
         }
     }
-    self.bioInput.delegate = self;
-    self.bioInput.returnKeyType = UIReturnKeyNext;
+    self.descriptionInput.delegate = self;
+    self.descriptionInput.returnKeyType = UIReturnKeyNext;
 
-    self.addressL2Input.returnKeyType = UIReturnKeyDone;
+    self.phoneNumberInput.returnKeyType = UIReturnKeyDone;
 }
 
 #pragma mark - UITextViewDelegate
@@ -140,7 +141,7 @@
 - (BOOL)textView:(UITextView *)textView shouldChangeTextInRange:(NSRange)range replacementText:(NSString *)text
 {
     if ([text isEqualToString:@"\n"]) {
-        [self.postcodeInput becomeFirstResponder];
+        [self.addressL1Input becomeFirstResponder];
         //[textView resignFirstResponder];
         return NO;
     }
@@ -160,7 +161,7 @@
 
 - (BOOL)setNextResponder:(UITextField *)textField {
 
-    NSArray *textFields = @[self.nameInput, self.surnameInput, self.bioInput, self.postcodeInput, self.addressL1Input, self.addressL2Input];
+    NSArray *textFields = @[self.nameInput, self.surnameInput, self.descriptionInput, self.addressL1Input, self.addressL2Input, self.phoneNumberInput];
     NSInteger indexOfInput = [textFields indexOfObject:textField];
     if (indexOfInput != NSNotFound && indexOfInput < textFields.count - 1) {
         UIResponder *next = [textFields objectAtIndex:(NSUInteger)(indexOfInput + 1)];
@@ -173,17 +174,26 @@
 }
 
 - (IBAction)backToTopButtonPressed:(id)sender {
+    [self clearForm];
     [self.nameInput becomeFirstResponder];
 }
 
 - (IBAction)clearButtonPressed:(id)sender {
 
-    NSArray *textFields = @[self.nameInput, self.surnameInput, self.bioInput, self.postcodeInput, self.addressL1Input, self.addressL2Input];
+    [self clearForm];
+}
+
+- (IBAction)doneButtonPressed:(id)sender {
+    [self dismissKeyboard];
+}
+
+- (void)clearForm {
+
+    NSArray *textFields = @[self.nameInput, self.surnameInput, self.descriptionInput, self.addressL1Input, self.addressL2Input, self.phoneNumberInput];
     for (id input in textFields) {
         [input setText:@""];
     }
 }
-
 - (void)dismissKeyboard {
     [self.view endEditing:YES];
 }

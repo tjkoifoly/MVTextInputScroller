@@ -40,13 +40,13 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                     </textView>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Email" minimumFontSize="17" id="YfR-N7-ivd" customClass="JVFloatLabeledTextField">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="First Name" minimumFontSize="17" id="YfR-N7-ivd" customClass="JVFloatLabeledTextField">
                                         <rect key="frame" x="20" y="49" width="280" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits"/>
                                     </textField>
-                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Full Name" minimumFontSize="17" id="ad6-g4-Pfg" customClass="JVFloatLabeledTextField">
+                                    <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Last Name" minimumFontSize="17" id="ad6-g4-Pfg" customClass="JVFloatLabeledTextField">
                                         <rect key="frame" x="20" y="93" width="280" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
@@ -73,7 +73,7 @@
                                     <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="9bt-0y-a8f">
                                         <rect key="frame" x="20" y="413" width="280" height="30"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                        <state key="normal" title="Back to Top">
+                                        <state key="normal" title="Start Again">
                                             <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
                                         </state>
                                         <connections>
@@ -92,16 +92,21 @@
                                 <action selector="clearButtonPressed:" destination="vXZ-lx-hvc" id="E9H-xu-x2b"/>
                             </connections>
                         </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Done" id="EhJ-Oa-Phm">
+                            <connections>
+                                <action selector="doneButtonPressed:" destination="vXZ-lx-hvc" id="Yac-pc-EDt"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="addressL1Input" destination="mmo-Zg-7gd" id="Xse-fE-hcd"/>
-                        <outlet property="addressL2Input" destination="mg0-jv-wVR" id="oAW-Rn-2ed"/>
-                        <outlet property="bioInput" destination="WdN-s0-01j" id="Oxb-yN-BpZ"/>
+                        <outlet property="addressL1Input" destination="wif-45-wF5" id="7jS-rY-nqi"/>
+                        <outlet property="addressL2Input" destination="mmo-Zg-7gd" id="VRS-sY-bo1"/>
                         <outlet property="confirmButton" destination="9bt-0y-a8f" id="ucS-4a-gSs"/>
-                        <outlet property="nameInput" destination="YfR-N7-ivd" id="mPN-Og-1EM"/>
-                        <outlet property="postcodeInput" destination="wif-45-wF5" id="IDN-C2-B2E"/>
+                        <outlet property="descriptionInput" destination="WdN-s0-01j" id="Oxb-yN-BpZ"/>
+                        <outlet property="nameInput" destination="YfR-N7-ivd" id="b2X-r1-foE"/>
+                        <outlet property="phoneNumberInput" destination="mg0-jv-wVR" id="dI4-7R-WEw"/>
                         <outlet property="scrollView" destination="MBB-S2-ddU" id="msR-lw-TZS"/>
-                        <outlet property="surnameInput" destination="ad6-g4-Pfg" id="srv-Vb-7FE"/>
+                        <outlet property="surnameInput" destination="ad6-g4-Pfg" id="NaI-FH-AzD"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="x5A-6p-PRh" sceneMemberID="firstResponder"/>
