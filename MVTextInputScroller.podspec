@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "MVTextInputScroller"
-  s.version      = "1.0.0"
+  s.version      = "1.0.1"
   s.summary      = "Class to automatically center vertically any input fields within a UIScrollView hierarchy when active"
 
   s.description  = <<-DESC
@@ -17,9 +17,7 @@ Pod::Spec.new do |s|
 
   s.source       = { :git => "https://github.com/bizz84/MVTextInputScroller.git", :tag => '1.0.1' }
 
-  s.source_files = 'MVTextInputsScroller/*.{h,m}', 'MVTextInputScroller/*.{h,m}'
-
-  s.resources = "MVTextInputScroller/*.storyboard" 
+  s.source_files = 'MVTextInputsScroller/*.{h,m}'
 
   s.frameworks = 'UIKit', 'Foundation', 'CoreGraphics'
 
