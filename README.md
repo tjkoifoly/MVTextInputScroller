@@ -53,7 +53,7 @@ MVTextInputsScroller won't work if this is not the case as it uses the contentSi
 Installation
 -------------------------------------------------------
 To include MVTextInputsScroller in your own project, simply drag the MVTextInputsScroller folder in XCode and you're ready to go.<br/>
-The demo app included in this project uses Masonry for auto-layout and JVFloatLabeledTextField for nice-looking input fields, however these are not required by the MVTextInputsScroller class.<br/>
+The demo app included in this project uses [Masonry](https://github.com/cloudkite/Masonry) for auto-layout and [JVFloatLabeledTextField](https://github.com/jverdi/JVFloatLabeledTextField) for nice-looking input fields, however these are not required by the MVTextInputsScroller class.<br/>
 
 Before running the demo app, please run:
 <pre>
