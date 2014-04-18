@@ -32,6 +32,10 @@
 @end
 @implementation ViewController
 
+- (void)dealloc {
+    [self.inputsScroller unregister];
+}
+
 - (void)viewDidLoad
 {
     [super viewDidLoad];
