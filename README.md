@@ -3,7 +3,7 @@ MVTextInputScroller
 
 Class to keep any selected input fields visible on screen when the keyboard is shown.
 
-Purpose
+Scope
 -------------------------------------------------------
 
 When a UITextField or UITextView input is active, the default iOS keyboard appears, reducing the visible screen area above it.
@@ -15,7 +15,7 @@ This project provides a MVTextInputScroller class that implements a robust solut
 Features
 -------------------------------------------------------
 - Automatically aligns the currently selected input field to the center of the visible screen area not covered by the keyboard.
-- Support for interface rotation. If an input field is active when the interface rotation changes, it is automatically adjusted.
+- Support for interface rotation. If an input field is active when the interface orientation changes, it is automatically adjusted.
 - Support for non-fullscreen presented view controllers such as UIModalPresentationPageSheet and UIModalPresentationFormSheet.
 - Supports keyboards with input accessory views.
 - Simple to use API.
