@@ -7,7 +7,7 @@ Purpose
 -------------------------------------------------------
 
 When a UITextField or UITextView input is active, the default iOS keyboard appears, reducing the visible screen area above it.
-If the input was originally positioned below the keyboard in the view layout, it will be hidden when the keyboard appears, making it hard to see what text is entered.
+If the input was originally positioned below the keyboard in the view layout, it will be hidden when the keyboard appears, making it hard to see what text is entered.<br/>
 A common solution to this problem is to embed all content in the input form inside a UIScrollView that can scroll vertically as necessary so that the active input field is visible.
 
 This project provides a MVTextInputScroller class that implements a robust solution to this problem.
@@ -19,10 +19,11 @@ Features
 - Support for non-fullscreen presented view controllers such as UIModalPresentationPageSheet and UIModalPresentationFormSheet.
 - Supports keyboards with input accessory views.
 - Simple to use API.
+- Requires Auto-Layout
 
 Usage
 -------------------------------------------------------
-MVTextInputsScroller aims to provide the simplest possible API, only requiring the input UIScrollView to be passed upon initialization. All input fields part of the UIScrollView sub-hierarchy are automatically registered
+MVTextInputsScroller aims to provide the simplest possible API, only requiring the input UIScrollView to be passed upon initialization. All input fields part of the UIScrollView sub-hierarchy are automatically registered.
 
 <pre>
 @interface ViewController()<UITextFieldDelegate, UITextViewDelegate>
@@ -44,6 +45,20 @@ MVTextInputsScroller aims to provide the simplest possible API, only requiring t
 
 A sample application demonstrating the usage MVTextInputsScroller is included.
 
+Notes
+-------------------------------------------------------
+MVTextInputsScroller is designed to work with UIScrollViews whose subviews are laid out using Auto-Layout. Specifically, all the subviews constraints need to be defined top to bottom so that the UIScrollView can infer its contentSize.<br/>
+MVTextInputsScroller won't work if this is not the case as it uses the contentSize to determine the correct contentOffset.
+
+Installation
+-------------------------------------------------------
+To include MVTextInputsScroller in your own project, simply drag the MVTextInputsScroller folder in XCode and you're ready to go.<br/>
+The demo app included in this project uses Masonry for auto-layout and JVFloatLabeledTextField for nice-looking input fields, however these are not required by the MVTextInputsScroller class.<br/>
+
+Before running the demo app, please run:
+<pre>
+pod install
+</pre>
 
 License
 -------------------------------------------------------
