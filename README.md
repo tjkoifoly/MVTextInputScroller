@@ -60,6 +60,13 @@ Before running the demo app, please run:
 pod install
 </pre>
 
+Preview
+-------------------------------------------------------
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=Z2jliMEIIOU
+" target="_blank"><img src="http://img.youtube.com/vi/Z2jliMEIIOU/0.jpg" 
+alt="MVTextInputScroller Demo iOS" width="320" height="240" border="10" /></a><br/>
+[See on Youtube](https://www.youtube.com/watch?v=Z2jliMEIIOU)
+
 License
 -------------------------------------------------------
 Copyright (c) 2014 Andrea Bizzotto bizz84@gmail.com
