@@ -1,7 +1,7 @@
 MVTextInputScroller
 ===================
 
-Class to automatically make any selected input fields visible on screen within a UIScrollView.
+Class to keep any selected input fields visible on screen when the keyboard is shown.
 
 Purpose
 -------------------------------------------------------
