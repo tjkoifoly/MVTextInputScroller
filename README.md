@@ -59,13 +59,6 @@ Before running the demo app, please run:
 pod install
 </pre>
 
-In order to use MVModalTransitions in a new project, add the following line to the project *-Prefix.pch file:
-
-<pre>
-#define MAS_SHORTHAND
-</pre>
-
-
 Preview
 -------------------------------------------------------
 
